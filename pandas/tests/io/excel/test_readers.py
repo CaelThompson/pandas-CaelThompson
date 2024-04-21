@@ -1641,7 +1641,7 @@ class TestExcelFileRead:
 
         actual = pd.read_excel(BytesIO(data), engine=engine)
         tm.assert_frame_equal(expected, actual)
-
+    
     def test_excel_read_binary_via_read_excel(self, read_ext, engine):
         # GH 38424
         with open("test1" + read_ext, "rb") as f:
@@ -1726,3 +1726,11 @@ class TestExcelFileRead:
                 pd.ExcelFile(tmp_excel, engine=engine)
             except errors:
                 pass
+            
+    def test_read_excel_booleandytpe(self, tmp_excel):
+            #GH58159
+            df = pd.DataFrame({"bool_column": [True]}, dtype=pd.BooleanDtype.name)
+            df.to_excel(tmp_excel, index=False)
+            df2 = pd.read_excel(tmp_excel, dtype={"bool_column": pd.BooleanDtype.name})
+            assert df2 == type(StringArray)
+            
